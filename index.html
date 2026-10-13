@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Diario Mágico de Halloween - 1° Básico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #2e1065 0%, #581c87 40%, #3b0764 80%, #1e1b4b 100%);
+            color: #1f2937;
+            user-select: none;
+        }
+        .title-font {
+            font-family: 'Fredoka', sans-serif;
+        }
+        .notebook-page {
+            background-color: #fffbeb;
+            background-image: linear-gradient(#fef08a 1px, transparent 1px);
+            background-size: 100% 2.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+            border-radius: 1.5rem;
+            border: 4px solid #f97316;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(3deg); }
+        }
+        .float-animation {
+            animation: float 3.5s ease-in-out infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-3 md:p-6 overflow-x-hidden">
+
+    <div class="fixed top-3 left-4 text-3xl md:text-4xl float-animation hidden md:block pointer-events-none">🦇</div>
+    <div class="fixed top-10 right-6 text-3xl md:text-4xl float-animation hidden md:block pointer-events-none" style="animation-delay: 1s;">🍬</div>
+    <div class="fixed bottom-4 left-8 text-3xl md:text-4xl float-animation hidden md:block pointer-events-none" style="animation-delay: 2s;">🎃</div>
+    <div class="fixed bottom-8 right-6 text-3xl md:text-4xl float-animation hidden md:block pointer-events-none" style="animation-delay: 1.5s;">👻</div>
+
+    <div class="w-full max-w-4xl notebook-page p-4 md:p-8 relative my-2">
+        
+        <!-- Cabecera del Diario -->
+        <div class="flex flex-col md:flex-row justify-between items-center border-b-2 border-orange-200 pb-3 mb-4">
+            <div class="flex items-center space-x-3 mb-2 md:mb-0">
+                <span class="text-3xl md:text-4xl">🎃📖</span>
+                <div>
+                    <h1 class="title-font text-xl md:text-2xl text-purple-950 font-bold tracking-wide">El Diario Mágico de Halloween</h1>
+                    <p id="level-badge" class="text-xs md:text-sm text-orange-600 font-bold">1° Básico | Lectoescritura Divertida</p>
+                </div>
+            </div>
+            
+            <!-- Puntuación y Progreso General -->
+            <div class="flex items-center space-x-3 bg-orange-100 px-3.5 py-1.5 rounded-full border-2 border-orange-300 shadow-sm">
+                <div class="flex items-center space-x-1">
+                    <span class="text-lg">⭐</span>
+                    <span id="score-display" class="title-font text-lg font-bold text-amber-700">0</span>
+                </div>
+                <div class="h-5 w-0.5 bg-orange-300"></div>
+                <div class="flex items-center space-x-1">
+                    <span class="text-sm">🎯</span>
+                    <span id="progress-display" class="title-font text-xs font-bold text-purple-900">Nivel 1 / 6</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Bienvenida -->
+        <div id="screen-welcome" class="text-center py-4">
+            <div class="inline-block bg-purple-100 p-5 rounded-3xl border-4 border-purple-300 shadow-inner mb-5 pulse-glow max-w-xl mx-auto">
+                <span class="text-6xl block mb-2">🎃🧙‍♂️👻</span>
+                <h2 class="title-font text-2xl md:text-3xl text-purple-950 font-bold mb-2">¡Hola, Pequeño Mago de la Lectura!</h2>
+                <p class="text-sm md:text-base text-purple-800 px-2">
+                    Ayuda a nuestro simpático fantasma a completar las 6 misiones de Halloween. ¡Adivina, une sílabas, ordena letras y escribe palabras mágicas!
+                </p>
+            </div>
+
+            <div class="max-w-md mx-auto bg-white p-5 rounded-2xl shadow-md border-2 border-orange-300 mb-5">
+                <label for="student-name" class="block text-purple-900 font-bold text-base mb-2">¿Cuál es tu nombre, estudiante estrella?</label>
+                <input type="text" id="student-name" placeholder="Escribe tu nombre aquí..." 
+                    class="w-full px-4 py-2.5 text-lg text-center title-font border-2 border-orange-300 rounded-xl focus:outline-none focus:border-orange-500 bg-orange-50">
+            </div>
+
+            <button onclick="startGame()" class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white title-font text-xl font-bold px-8 py-3.5 rounded-2xl shadow-lg transform transition hover:scale-105 active:scale-95 border-b-4 border-amber-800 flex items-center justify-center mx-auto space-x-2">
+                <span>🎃 ¡Abrir el Diario Mágico!</span>
+            </button>
+        </div>
+
+        <!-- Pantalla del Juego -->
+        <div id="screen-game" class="hidden">
+            <!-- Barra de instrucción guiada por audio -->
+            <div class="bg-orange-50 border-2 border-orange-200 rounded-2xl p-3 mb-4 flex items-center justify-between shadow-sm">
+                <div class="flex items-center space-x-3">
+                    <span class="text-2xl" id="level-icon-header">🎃</span>
+                    <div>
+                        <h3 id="chapter-title" class="title-font font-bold text-purple-950 text-sm md:text-base">Nivel 1: Vocales Mágicas</h3>
+                        <p id="instruction-text" class="text-purple-800 text-xs md:text-sm font-semibold">Instrucción del nivel</p>
+                    </div>
+                </div>
+                <button onclick="speakCurrentInstruction()" class="bg-purple-200 hover:bg-purple-300 text-purple-900 px-3 py-2 rounded-xl transition flex items-center space-x-1 font-bold text-xs" title="Escuchar">
+                    <span>🔊 Escuchar Pregunta</span>
+                </button>
+            </div>
+
+            <!-- Área del Reto Dinámico -->
+            <div class="bg-white rounded-3xl p-5 md:p-6 border-4 border-orange-300 shadow-md mb-4 text-center">
+                
+                <!-- Imagen o Emoji principal -->
+                <div id="challenge-image" class="text-6xl md:text-7xl mb-3 float-animation">🍎</div>
+
+                <!-- Pista o Pregunta -->
+                <div class="bg-amber-50 border-2 border-dashed border-amber-300 rounded-2xl p-3 mb-4 max-w-xl mx-auto">
+                    <p id="challenge-clue" class="title-font text-lg md:text-xl text-purple-950 font-bold">
+                        ¿Pregunta del reto?
+                    </p>
+                </div>
+
+                <!-- Contenedor dinámico según el tipo de nivel -->
+                <div id="challenge-interaction-area" class="mb-4">
+                    <!-- Se inyecta por JavaScript -->
+                </div>
+
+            </div>
+
+            <!-- Barra inferior de progreso -->
+            <div class="flex justify-between items-center text-purple-800 font-bold text-xs md:text-sm">
+                <span id="progress-counter">Reto 1 de 6</span>
+                <span id="encouragement-msg" class="text-orange-600 italic">¡Poderes mágicos de lectura! ✨</span>
+            </div>
+        </div>
+
+        <!-- Pantalla de Victoria -->
+        <div id="screen-victory" class="hidden text-center py-6">
+            <div class="inline-block bg-amber-100 p-6 rounded-3xl border-4 border-amber-400 shadow-xl mb-5 max-w-lg mx-auto">
+                <span class="text-7xl block mb-3 animate-bounce">🏆🎃</span>
+                <h2 class="title-font text-2xl md:text-3xl text-purple-950 font-bold mb-2">¡Felicitaciones, <span id="final-name">Estudiante</span>!</h2>
+                <p class="text-sm md:text-base text-purple-800 mb-3 font-medium">
+                    ¡Completaste con éxito las 36 misiones del Diario Mágico de Halloween! Eres un lector y escritor brillante.
+                </p>
+                <div class="bg-white rounded-2xl p-3 border-2 border-amber-300 max-w-xs mx-auto mb-4">
+                    <p class="text-xs text-gray-600 font-bold">Estrellas Mágicas Obtenidas:</p>
+                    <p id="final-score" class="title-font text-3xl font-bold text-orange-600">360 Estrellas</p>
+                </div>
+            </div>
+
+            <button onclick="restartGame()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white title-font text-lg font-bold px-8 py-3 rounded-2xl shadow-lg transform transition hover:scale-105 active:scale-95 border-b-4 border-purple-950">
+                🔄 Jugar de Nuevo
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Modal de Feedback -->
+    <div id="feedback-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+        <div id="modal-box" class="bg-white rounded-3xl p-6 max-w-sm w-full text-center border-4 border-orange-400 shadow-2xl transform transition-all scale-95">
+            <div id="modal-icon" class="text-5xl mb-2">🌟</div>
+            <h3 id="modal-title" class="title-font text-xl font-bold text-purple-950 mb-1">¡Excelente!</h3>
+            <p id="modal-text" class="text-gray-700 text-sm md:text-base mb-5">¡Respuesta correcta!</p>
+            <button onclick="closeModal()" class="bg-orange-500 hover:bg-orange-600 text-white title-font font-bold text-base px-6 py-2.5 rounded-xl w-full shadow-md">
+                Continuar 🚀
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 36 Desafíos organizados en 6 niveles temáticos de Halloween y Lectoescritura
+        const levelsData = [
+            {
+                level: 1,
+                name: "Nivel 1: Vocales Mágicas de Halloween",
+                icon: "🎃",
+                instruction: "Toca la vocal con la que empieza la imagen.",
+                challenges: [
+                    { emoji: "🕷️", clue: "¿Con qué vocal empieza Araña?", type: "multiple", options: ["A", "E", "I", "O", "U"], answer: "A" },
+                    { emoji: "⭐", clue: "¿Con qué vocal empieza Estrella?", type: "multiple", options: ["A", "E", "I", "O", "U"], answer: "E" },
+                    { emoji: "🦎", clue: "¿Con qué vocal empieza Iguana?", type: "multiple", options: ["A", "E", "I", "O", "U"], answer: "I" },
+                    { emoji: "🐻", clue: "¿Con qué vocal empieza Oso?", type: "multiple", options: ["A", "E", "I", "O", "U"], answer: "O" },
+                    { emoji: "🍇", clue: "¿Con me vocal empieza Uva?", type: "multiple", options: ["A", "E", "I", "O", "U"], answer: "U" },
+                    { emoji: "🦅", clue: "¿Con qué vocal empieza Águila?", type: "multiple", options: ["A", "E", "I", "O", "U"], answer: "A" }
+                ]
+            },
+            {
+                level: 2,
+                name: "Nivel 2: Sonidos e Iniciales Mágicas",
+                icon: "🐱",
+                instruction: "Descubre con qué letra empieza el dibujo.",
+                challenges: [
+                    { emoji: "🐱", clue: "Animal suave que dice miau. ¿Con qué letra empieza?", type: "multiple", options: ["G", "P", "L", "S"], answer: "G" },
+                    { emoji: "🌙", clue: "Brilla en la noche estrellada. ¿Con qué letra empieza?", type: "multiple", options: ["M", "L", "S", "P"], answer: "L" },
+                    { emoji: "🎃", clue: "Es redonda y de color naranja. ¿Con qué letra empieza?", type: "multiple", options: ["C", "T", "M", "S"], answer: "C" },
+                    { emoji: "☀️", clue: "Nos da luz y calor de día. ¿Con qué letra empieza?", type: "multiple", options: ["S", "M", "L", "P"], answer: "S" },
+                    { emoji: "👻", clue: "Amigo blanco y transparente. ¿Con qué letra empieza?", type: "multiple", options: ["F", "P", "M", "S"], answer: "F" },
+                    { emoji: "🦇", clue: "Vuela de noche con sus alas. ¿Con me letra empieza?", type: "multiple", options: ["M", "P", "S", "L"], answer: "M" }
+                ]
+            },
+            {
+                level: 3,
+                name: "Nivel 3: Sílabas de la Poción",
+                icon: "🧪",
+                instruction: "Elige la sílaba que falta para completar la palabra.",
+                challenges: [
+                    { emoji: "🎃", clue: "Ca - la - ... - za", type: "syllable", pool: ["BA", "MA", "PA", "LA"], answer: "BA" },
+                    { emoji: "👻", clue: "Fan - ... - ma", type: "syllable", pool: ["TAS", "LUN", "ROS", "PAS"], answer: "TAS" },
+                    { emoji: "🧹", clue: "Es - co - ...", type: "syllable", pool: ["BA", "CA", "PA", "TO"], answer: "BA" },
+                    { emoji: "🧙‍♀️", clue: "... - ja", type: "syllable", pool: ["BRU", "PLA", "CLA", "TRA"], answer: "BRU" },
+                    { emoji: "🏠", clue: "... - sa", type: "syllable", pool: ["CA", "ME", "SO", "PE"], answer: "CA" },
+                    { emoji: "🐱", clue: "... - to", type: "syllable", pool: ["GA", "MA", "PA", "TA"], answer: "GA" }
+                ]
+            },
+            {
+                level: 4,
+                name: "Nivel 4: Ordena las Letras Mágicas",
+                icon: "🔤",
+                instruction: "Toca las letras en orden para descubrir la palabra.",
+                challenges: [
+                    { emoji: "🐱", clue: "Animal que caza ratones:", type: "scramble", letters: ["T", "O", "G", "A"], answer: "GATO" },
+                    { emoji: "🌙", clue: "Astro de la noche de Halloween:", type: "scramble", letters: ["N", "A", "L", "U"], answer: "LUNA" },
+                    { emoji: "🍞", clue: "Delicioso alimento horneado:", type: "scramble", letters: ["N", "P", "A"], answer: "PAN" },
+                    { emoji: "☀️", clue: "Brilla en el cielo:", type: "scramble", letters: ["L", "S", "O"], answer: "SOL" },
+                    { emoji: "🦇", clue: "Animal volador nocturno:", type: "scramble", letters: ["O", "C", "I", "R", "L", "A", "G", "U", "M", "E"], answer: "MURCIELAGO" },
+                    { emoji: "🍬", clue: "Dulce sabroso de Halloween:", type: "scramble", letters: ["E", "C", "L", "U", "D"], answer: "DULCE" }
+                ]
+            },
+            {
+                level: 5,
+                name: "Nivel 5: Lectura Mágica",
+                icon: "📖",
+                instruction: "Lee la historia corta y elige la respuesta correcta.",
+                challenges: [
+                    { emoji: "🐱🌙", clue: "'El gato negro mira la luna.' ¿Qué mira el gato?", type: "multiple", options: ["La luna", "El sol", "Un pan", "Una casa"], answer: "La luna" },
+                    { emoji: "🧙‍♀️🧹", clue: "'La brujita vuela en su escoba.' ¿En qué vuela?", type: "multiple", options: ["En escoba", "En auto", "En nube", "En mesa"], answer: "En escoba" },
+                    { emoji: "🎃✨", clue: "'La calabaza brilla de noche.' ¿Cuándo brilla?", type: "multiple", options: ["De noche", "De día", "En la tarde", "Nunca"], answer: "De noche" },
+                    { emoji: "👻🍬", clue: "'El fantasma come un dulce rico.' ¿Qué come?", type: "multiple", options: ["Un dulce", "Una sopa", "Fruta", "Agua"], answer: "Un dulce" },
+                    { emoji: "🦇🌳", clue: "'El murciélago duerme en el árbol.' ¿Dónde duerme?", type: "multiple", options: ["En el árbol", "En el suelo", "En el agua", "En la casa"], answer: "En el árbol" },
+                    { emoji: "📖⭐", clue: "'Leemos un libro de magia.' ¿Qué leemos?", type: "multiple", options: ["Un libro", "Una carta", "Un diario", "Un mapa"], answer: "Un libro" }
+                ]
+            },
+            {
+                level: 6,
+                name: "Nivel 6: Escribe en el Diario Secreto",
+                icon: "✏️",
+                instruction: "Escribe la palabra usando las letras de apoyo.",
+                challenges: [
+                    { emoji: "🐱", clue: "Escribe el nombre del animal que dice miau:", answer: "GATO", hints: ["O", "G", "T", "A"] },
+                    { emoji: "🌙", clue: "Escribe el astro brillante de la noche:", answer: "LUNA", hints: ["U", "L", "A", "N"] },
+                    { emoji: "🍞", clue: "Escribe el rico alimento esponjoso:", answer: "PAN", hints: ["A", "P", "N"] },
+                    { emoji: "☀️", clue: "Escribe el nombre del rey del día:", answer: "SOL", hints: ["O", "S", "L"] },
+                    { emoji: "🧙‍♀️", clue: "Escribe el personaje del sombrero mágico:", answer: "BRUJA", hints: ["J", "B", "U", "R", "A"] },
+                    { emoji: "🎃", clue: "Escribe el fruto naranja de Halloween:", answer: "CALABAZA", hints: ["A", "C", "L", "B", "Z", "A", "A"] }
+                ]
+            }
+        ];
+
+        let currentLevelIndex = 0;
+        let currentChallengeIndex = 0;
+        let score = 0;
+        let studentName = "";
+        let currentTypedLetters = [];
+
+        // Audio Effects via Web Audio API
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            if (type === 'success') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(320, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(640, audioCtx.currentTime + 0.25);
+                gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'error') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(140, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(90, audioCtx.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(450, audioCtx.currentTime);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            }
+        }
+
+        function speakCurrentInstruction() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const levelObj = levelsData[currentLevelIndex];
+                const challengeObj = levelObj.challenges[currentChallengeIndex];
+                // Solo lee la pregunta/pista directamente sin mencionar el nombre del nivel
+                const textToSpeech = `${challengeObj.clue}`;
+                const utterance = new SpeechSynthesisUtterance(textToSpeech);
+                utterance.lang = 'es-ES';
+                utterance.rate = 0.85; // Velocidad pausada para 1° Básico
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function startGame() {
+            const nameInput = document.getElementById('student-name').value.trim();
+            if (nameInput === "") {
+                showCustomModal("¡Espera! 🎃", "Escribe tu nombre para guardar tus estrellas mágicas.", "✍️", false);
+                return;
+            }
+            studentName = nameInput;
+            playSound('click');
+            
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+            
+            loadChallenge();
+        }
+
+        function loadChallenge() {
+            const levelObj = levelsData[currentLevelIndex];
+            const challenge = levelObj.challenges[currentChallengeIndex];
+            
+            document.getElementById('level-badge').innerText = levelObj.name;
+            document.getElementById('level-icon-header').innerText = levelObj.icon;
+            document.getElementById('chapter-title').innerText = levelObj.name;
+            document.getElementById('instruction-text').innerText = levelObj.instruction;
+            document.getElementById('challenge-image').innerText = challenge.emoji;
+            document.getElementById('challenge-clue').innerText = `"${challenge.clue}"`;
+            
+            const totalChallengesNum = levelsData.reduce((acc, l) => acc + l.challenges.length, 0);
+            const currentGlobalIndex = levelsData.slice(0, currentLevelIndex).reduce((acc, l) => acc + l.challenges.length, 0) + currentChallengeIndex + 1;
+            
+            document.getElementById('progress-display').innerText = `Nivel ${currentLevelIndex + 1}/6`;
+            document.getElementById('progress-counter').innerText = `Reto ${currentChallengeIndex + 1} de ${levelObj.challenges.length} (Global: ${currentGlobalIndex}/${totalChallengesNum})`;
+            
+            currentTypedLetters = [];
+            renderInteractionArea(challenge);
+            
+            setTimeout(speakCurrentInstruction, 300);
+        }
+
+        function renderInteractionArea(challenge) {
+            const area = document.getElementById('challenge-interaction-area');
+            area.innerHTML = "";
+
+            if (challenge.type === "multiple") {
+                const grid = document.createElement('div');
+                grid.className = "flex flex-wrap justify-center gap-3 max-w-lg mx-auto";
+                challenge.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "bg-orange-100 hover:bg-orange-200 border-3 border-orange-400 text-purple-950 title-font text-xl font-bold px-5 py-3 rounded-2xl shadow transition transform hover:scale-105 active:scale-95 min-w-[70px]";
+                    btn.innerText = opt;
+                    btn.onclick = () => checkMultipleAnswer(opt, challenge.answer);
+                    grid.appendChild(btn);
+                });
+                area.appendChild(grid);
+            } 
+            else if (challenge.type === "syllable") {
+                const p = document.createElement('p');
+                p.className = "text-xs text-gray-500 mb-2 uppercase font-bold tracking-wider";
+                p.innerText = "Toca la sílaba correcta:";
+                area.appendChild(p);
+
+                const grid = document.createElement('div');
+                grid.className = "flex flex-wrap justify-center gap-3 max-w-lg mx-auto";
+                challenge.pool.forEach(syl => {
+                    const btn = document.createElement('button');
+                    btn.className = "bg-amber-100 hover:bg-amber-200 border-3 border-amber-400 text-amber-950 title-font text-xl font-bold px-6 py-3 rounded-2xl shadow transition transform hover:scale-105 active:scale-95";
+                    btn.innerText = syl;
+                    btn.onclick = () => checkMultipleAnswer(syl, challenge.answer);
+                    grid.appendChild(btn);
+                });
+                area.appendChild(grid);
+            }
+            else if (challenge.type === "scramble") {
+                const p = document.createElement('p');
+                p.className = "text-xs text-gray-500 mb-2 uppercase font-bold tracking-wider";
+                p.innerText = "Toca las letras en orden para armar la palabra:";
+                area.appendChild(p);
+
+                // Cuadro de visualización
+                const displayBox = document.createElement('div');
+                displayBox.id = "scramble-display";
+                displayBox.className = "flex justify-center items-center space-x-2 bg-purple-50 border-2 border-purple-300 rounded-2xl p-3 mb-4 min-h-[60px] max-w-md mx-auto title-font text-2xl font-bold text-purple-950 tracking-widest";
+                displayBox.innerText = "_ ".repeat(challenge.answer.length).trim();
+                area.appendChild(displayBox);
+
+                // Banco de letras desordenadas
+                const poolDiv = document.createElement('div');
+                poolDiv.className = "flex flex-wrap justify-center gap-2 mb-3";
+                challenge.letters.forEach((letter) => {
+                    const lBtn = document.createElement('button');
+                    lBtn.className = "bg-purple-100 hover:bg-purple-200 border-2 border-purple-400 text-purple-950 title-font text-xl font-bold w-11 h-11 rounded-xl shadow transition";
+                    lBtn.innerText = letter;
+                    lBtn.onclick = () => addScrambleLetter(letter, lBtn, challenge.answer);
+                    poolDiv.appendChild(lBtn);
+                });
+                area.appendChild(poolDiv);
+
+                const btnRow = document.createElement('div');
+                btnRow.className = "flex justify-center space-x-3";
+                
+                const clearBtn = document.createElement('button');
+                clearBtn.className = "bg-gray-200 hover:bg-gray-300 text-gray-700 title-font font-bold px-4 py-2 rounded-xl text-sm";
+                clearBtn.innerText = "🔄 Borrar";
+                clearBtn.onclick = () => resetScramble(challenge);
+                btnRow.appendChild(clearBtn);
+
+                const checkBtn = document.createElement('button');
+                checkBtn.className = "bg-orange-500 hover:bg-orange-600 text-white title-font font-bold px-6 py-2 rounded-xl text-sm shadow";
+                checkBtn.innerText = "✅ Comprobar";
+                checkBtn.onclick = () => checkScrambleAnswer(challenge.answer);
+                btnRow.appendChild(checkBtn);
+
+                area.appendChild(btnRow);
+            }
+            else {
+                // Nivel 6: Escritura guiada con letras desordenadas de ayuda
+                const p = document.createElement('p');
+                p.className = "text-xs text-gray-500 mb-2 uppercase font-bold tracking-wider";
+                p.innerText = "Letras de ayuda (puedes usarlas para escribir):";
+                area.appendChild(p);
+
+                const hintsDiv = document.createElement('div');
+                hintsDiv.className = "flex flex-wrap justify-center gap-2 mb-4";
+                challenge.hints.forEach(h => {
+                    const span = document.createElement('span');
+                    span.className = "bg-amber-100 border-2 border-amber-300 text-amber-950 title-font font-bold px-3 py-1 rounded-xl text-lg shadow-sm";
+                    span.innerText = h;
+                    hintsDiv.appendChild(span);
+                });
+                area.appendChild(hintsDiv);
+
+                const wrapper = document.createElement('div');
+                wrapper.className = "max-w-md mx-auto flex items-center bg-gray-50 border-3 border-orange-300 rounded-2xl p-2 shadow-inner";
+                wrapper.innerHTML = `
+                    <span class="text-2xl px-3">✏️</span>
+                    <input type="text" id="free-answer-input" placeholder="Escribe aquí..." 
+                        class="w-full bg-transparent text-xl title-font text-purple-950 focus:outline-none uppercase px-2"
+                        onkeypress="handleKeyPress(event, '${challenge.answer}')">
+                    <button onclick="checkFreeAnswer('${challenge.answer}')" class="bg-orange-500 hover:bg-orange-600 text-white title-font font-bold px-5 py-2.5 rounded-xl transition shadow text-sm">
+                        Revisar
+                    </button>
+                `;
+                area.appendChild(wrapper);
+            }
+        }
+
+        function addScrambleLetter(letter, btnElement, targetAnswer) {
+            playSound('click');
+            currentTypedLetters.push(letter);
+            btnElement.disabled = true;
+            btnElement.classList.add('opacity-40', 'bg-gray-300');
+            
+            const display = document.getElementById('scramble-display');
+            display.innerText = currentTypedLetters.join(' ');
+        }
+
+        function resetScramble(challenge) {
+            playSound('click');
+            currentTypedLetters = [];
+            renderInteractionArea(challenge);
+        }
+
+        function checkScrambleAnswer(correctAnswer) {
+            const userWord = currentTypedLetters.join('');
+            if (userWord === "") {
+                playSound('error');
+                showCustomModal("¡Atención!", "Toca las letras para armar la palabra.", "💡", false);
+                return;
+            }
+
+            if (userWord === correctAnswer) {
+                playSound('success');
+                score += 10;
+                document.getElementById('score-display').innerText = score;
+                showCustomModal("¡Muy Bien! 🌟", `¡Gran trabajo, ${studentName}! Lograste formar la palabra correcta.`, "🎃", true);
+            } else {
+                playSound('error');
+                showCustomModal("¡Casi, casi!", `No te preocupes, ¡inténtalo en el siguiente desafío!`, "💪", true);
+            }
+        }
+
+        function checkMultipleAnswer(selected, correct) {
+            if (selected === correct) {
+                playSound('success');
+                score += 10;
+                document.getElementById('score-display').innerText = score;
+                showCustomModal("¡Correcto! ⭐", `¡Excelente, ${studentName}! Respuesta perfecta.`, "🎃", true);
+            } else {
+                playSound('error');
+                showCustomModal("¡Casi, casi!", `¡Sigue practicando, lo estás haciendo genial!`, "💪", true);
+            }
+        }
+
+        function handleKeyPress(event, correct) {
+            if (event.key === 'Enter') {
+                checkFreeAnswer(correct);
+            }
+        }
+
+        function checkFreeAnswer(correctAnswer) {
+            const input = document.getElementById('free-answer-input');
+            const userAns = input.value.trim().toUpperCase();
+
+            if (userAns === "") {
+                playSound('error');
+                showCustomModal("¡Atención!", "Escribe una palabra antes de revisar.", "💡", false);
+                return;
+            }
+
+            if (userAns === correctAnswer) {
+                playSound('success');
+                score += 10;
+                document.getElementById('score-display').innerText = score;
+                showCustomModal("¡Escribiste Fantástico! ✍️", `¡Perfecto, ${studentName}! Has escrito la palabra correcta.`, "🌟", true);
+            } else {
+                playSound('error');
+                showCustomModal("¡Casi, casi!", `¡Buen intento! Vamos al próximo reto.`, "💪", true);
+            }
+        }
+
+        let isCorrectFlow = false;
+        function showCustomModal(title, text, icon, advance) {
+            isCorrectFlow = advance;
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-text').innerText = text;
+            document.getElementById('modal-icon').innerText = icon;
+            document.getElementById('feedback-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            playSound('click');
+            document.getElementById('feedback-modal').classList.add('hidden');
+            
+            if (isCorrectFlow) {
+                currentChallengeIndex++;
+                const currentLevelChallenges = levelsData[currentLevelIndex].challenges;
+                
+                if (currentChallengeIndex < currentLevelChallenges.length) {
+                    loadChallenge();
+                } else {
+                    currentLevelIndex++;
+                    currentChallengeIndex = 0;
+                    
+                    if (currentLevelIndex < levelsData.length) {
+                        showCustomModal("¡Nivel Superado! 🎉", `¡Completaste el Nivel con éxito! Prepárate para las nuevas misiones mágicas.`, "🏆", false);
+                        isCorrectFlow = true;
+                    } else {
+                        finishGame();
+                    }
+                }
+            }
+        }
+
+        function finishGame() {
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-victory').classList.remove('hidden');
+            document.getElementById('final-name').innerText = studentName;
+            document.getElementById('final-score').innerText = `${score} Estrellas Mágicas`;
+            
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(`¡Felicitaciones ${studentName}! Has completado todas las misiones del diario mágico.`);
+                utterance.lang = 'es-ES';
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function restartGame() {
+            playSound('click');
+            currentLevelIndex = 0;
+            currentChallengeIndex = 0;
+            score = 0;
+            document.getElementById('score-display').innerText = score;
+            document.getElementById('screen-victory').classList.add('hidden');
+            document.getElementById('screen-welcome').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
